@@ -59,13 +59,13 @@ elseif DB.type == MYSQL then
     local luasql = require("luasql.mysql")
     sql = luasql.mysql()
     print(DB.name, DB.username, DB.password, DB.host, DB.port)
-    _connect = sql:connect(DB.name, DB.username, DB.password, DB.host, DB.port)
+    _connect = sql:connect('', DB.username, DB.password, DB.host, DB.port)
 
 elseif DB.type == POSTGRESQL then
     local luasql = require("luasql.postgres")
     sql = luasql.postgres()
     print(DB.name, DB.username, DB.password, DB.host, DB.port)
-    _connect = sql:connect(DB.name, DB.username, DB.password, DB.host, DB.port)
+    _connect = sql:connect('', DB.username, DB.password, DB.host, DB.port)
 
 else
     BACKTRACE(ERROR, "Database type not suported '" .. tostring(DB.type) .. "'")
@@ -75,16 +75,17 @@ if not _connect then
     BACKTRACE(ERROR, "Connect problem!")
 end
 
--- if DB.new then
---     BACKTRACE(INFO, "Remove old database")
+if DB.new then
+    BACKTRACE(INFO, "Remove old database")
+    if DB.type == SQLITE then
+        os.remove(DB.name)
+    else
+        _connect:execute('DROP DATABASE IF EXISTS `' .. DB.name .. '`')
+        _connect:execute('CREATE DATABASE IF NOT EXISTS`' .. DB.name .. '`')
+    end
+end
 
---     if DB.type == SQLITE then
---         os.remove(DB.name)
---     else
---         _connect:execute('DROP DATABASE `' .. DB.name .. '`')
---     end
--- end
-
+_connect = sql:connect(DB.name, DB.username, DB.password, DB.host, DB.port)
 ------------------------------------------------------------------------------
 --                               Database                                   --
 ------------------------------------------------------------------------------

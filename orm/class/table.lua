@@ -22,7 +22,7 @@ Table = {
 -- This method create new table
 -------------------------------------------
 -- @table_instance {table} class Table instance
--- 
+--
 -- @table_instance.__tablename__ {string} table name
 -- @table_instance.__colnames {table} list of column instances
 -- @table_instance.__foreign_keys {table} list of foreign key
@@ -37,6 +37,8 @@ function Table:create_table(table_instance)
     BACKTRACE(INFO, "Start create table: " .. tablename)
 
     -- other variables
+    -- local delete_query = "DROP TABLE IF EXISTS " .. tablename
+    -- db:execute(delete_query)
     local create_query = "CREATE TABLE IF NOT EXISTS `" .. tablename .. "` \n("
     local counter = 0
     local column_query
